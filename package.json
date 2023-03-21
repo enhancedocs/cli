@@ -1,8 +1,10 @@
 {
   "name": "enhancedocs",
-  "version": "0.1.0",
+  "version": "0.2.0",
+  "license": "MIT",
   "main": "index.js",
   "bin": "./bin.js",
+  "repository": "https://github.com/enhancedocs/enhancedocs",
   "scripts": {
     "build": "cargo-cp-artifact -nc index.node -- cargo build --message-format=json-render-diagnostics",
     "build-debug": "npm run build --",
@@ -13,5 +15,6 @@
   "author": "Alvaro Molina <alw3ys@gmail.com>",
   "devDependencies": {
     "cargo-cp-artifact": "^0.1"
-  }
+  },
+  "dependencies": {}
 }

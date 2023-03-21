@@ -1,3 +1,7 @@
+.idea
+
+.enhancedocs
+
 target
 index.node
 **/node_modules

@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 const path = require("path");
-const { buildDocs } = require("./");
+const { buildDocs, pushDocs } = require("./");
 
 const help = () => {
   console.log(`Usage:
   enhancedocs build <docs_path>
+  enhancedocs push
   enhancedocs -v`);
   process.exit(code);
 }
@@ -14,6 +15,7 @@ const ln = args.length;
 const [x, y] = args;
 const cmds = {
   build: () => buildDocs(x),
+  push: () => pushDocs,
   ['-v']: () => console.log(require(path.join(__dirname, '../package.json')).version),
 };
 try {

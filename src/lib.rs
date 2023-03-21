@@ -31,7 +31,10 @@ fn get_files(dir: &Path) -> Vec<PathBuf> {
 
 fn build_docs(mut cx: FunctionContext) -> JsResult<JsBoolean> {
     let folder = cx.argument::<JsString>(0)?.value(&mut cx);
-    let output_file = Path::new("enhancedocs.jsonp");
+
+    fs::create_dir_all(".enhancedocs");
+
+    let output_file = Path::new(".enhancedocs/output.jsonp");
 
     // If the output file exists, delete it so we can start fresh
     if output_file.exists() {
