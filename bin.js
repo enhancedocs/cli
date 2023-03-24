@@ -15,7 +15,7 @@ const ln = args.length;
 const [x, y] = args;
 const cmds = {
   build: () => buildDocs(x),
-  push: () => pushDocs,
+  push: () => pushDocs(),
   ['-v']: () => console.log(require(path.join(__dirname, '../package.json')).version),
 };
 try {

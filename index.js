@@ -6,7 +6,7 @@ const nativeModule = require('./index.node');
 const enhacedocsBaseAPIUrl = process.env.ENHANCE_ENV === "dev" ? "http://127.0.0.1:8080" : "https://api.enhnacedocs.com";
 
 
-const pushDocs = new Promise((resolve, reject) => {
+const pushDocs = () => new Promise((resolve, reject) => {
   const enhanceAPIOptions = {
     headers: {
       authorization: "Bearer " + process.env.ENHANCEDOCS_API_KEY
