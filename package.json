@@ -1,6 +1,6 @@
 {
   "name": "enhancedocs",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "main": "index.js",
   "bin": "./bin.js",
   "repository": {
@@ -17,7 +17,7 @@
     "test": "cargo test"
   },
   "devDependencies": {
-    "cargo-cp-artifact": "^0.1"
+    "cargo-cp-artifact": "^0.1.8"
   },
   "dependencies": {}
 }
