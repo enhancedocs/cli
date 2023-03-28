@@ -3,7 +3,7 @@ const http = process.env.ENHANCE_ENV === "dev" ? require("http") : require("http
 const https = require("https");
 const nativeModule = require('./index.node');
 
-const enhacedocsBaseAPIUrl = process.env.ENHANCE_ENV === "dev" ? "http://127.0.0.1:8080" : "https://api.enhancedocs.com";
+const enhancedocsBaseAPIUrl = process.env.ENHANCE_ENV === "dev" ? "http://127.0.0.1:8080" : "https://api.enhancedocs.com";
 
 
 const pushDocs = () => new Promise((resolve, reject) => {
@@ -12,7 +12,7 @@ const pushDocs = () => new Promise((resolve, reject) => {
       authorization: "Bearer " + process.env.ENHANCEDOCS_API_KEY
     }
   }
-  const req = http.get(enhacedocsBaseAPIUrl + '/integrations/signed-url', enhanceAPIOptions, (res) => {
+  const req = http.get(enhancedocsBaseAPIUrl + '/integrations/signed-url', enhanceAPIOptions, (res) => {
     if (res.statusCode === 401) {
       return reject(new Error("Unauthorized; Invalid ENHANCEDOCS_API_KEY"));
     }
