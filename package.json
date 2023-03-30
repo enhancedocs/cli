@@ -1,6 +1,6 @@
 {
   "name": "enhancedocs",
-  "version": "0.2.5",
+  "version": "0.2.3",
   "main": "index.js",
   "bin": "./bin.js",
   "repository": {
