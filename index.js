@@ -1,10 +1,43 @@
 const fs = require("fs");
+const path = require("path");
 const http = process.env.ENHANCE_ENV === "dev" ? require("http") : require("https");
 const https = require("https");
-const nativeModule = require('./index.node');
 
 const enhancedocsBaseAPIUrl = process.env.ENHANCE_ENV === "dev" ? "http://127.0.0.1:8080" : "https://api.enhancedocs.com";
 
+const getFiles = (dir) => {
+  return fs.promises.readdir(dir, { withFileTypes: true }).then(entries => {
+      const filesPromises = entries.map(entry => {
+        const entryPath = path.join(dir, entry.name);
+        if (entry.isFile()) {
+          return Promise.resolve([entryPath]);
+        } else {
+          return getFiles(entryPath);
+        }
+      });
+      return Promise.all(filesPromises);
+    })
+    .then(filesArrays => {
+      return filesArrays.flat();
+    });
+}
+
+const buildDocs = async (folder) => {
+  await fs.promises.mkdir('.enhancedocs', { recursive: true });
+
+  const outputFilePath = path.join('.enhancedocs', 'output.jsonp');
+  const files = await getFiles(folder);
+
+  const outputData = await Promise.all(files.map(async file => {
+    const content = await fs.promises.readFile(file, 'utf-8');
+    return {
+      source: file,
+      content
+    };
+  }));
+  await fs.promises.writeFile(outputFilePath, outputData.map(data => JSON.stringify(data)).join('\n'));
+  return true;
+}
 
 const pushDocs = () => new Promise((resolve, reject) => {
   const enhanceAPIOptions = {
@@ -38,6 +71,6 @@ const pushDocs = () => new Promise((resolve, reject) => {
 });
 
 module.exports = {
-  buildDocs: nativeModule.buildDocs,
+  buildDocs: buildDocs,
   pushDocs: pushDocs,
 };
