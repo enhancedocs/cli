@@ -39,13 +39,16 @@ const buildDocs = async (folder) => {
   return true;
 }
 
-const pushDocs = () => new Promise((resolve, reject) => {
+const pushDocs = (projectId) => new Promise((resolve, reject) => {
+  if (!projectId) {
+    return reject(new Error("Required Project Id; enhancedocs push <project_id>"));
+  }
   const enhanceAPIOptions = {
     headers: {
       authorization: "Bearer " + process.env.ENHANCEDOCS_API_KEY
     }
   }
-  const req = http.get(enhancedocsBaseAPIUrl + '/integrations/signed-url', enhanceAPIOptions, (res) => {
+  const req = http.get(enhancedocsBaseAPIUrl + `/integrations/signed-url?projectId=${projectId}`, enhanceAPIOptions, (res) => {
     if (res.statusCode === 401) {
       return reject(new Error("Unauthorized; Invalid ENHANCEDOCS_API_KEY"));
     }

@@ -5,7 +5,7 @@ const { buildDocs, pushDocs } = require("./");
 const help = () => {
   console.log(`Usage:
   enhancedocs build <docs_path>
-  enhancedocs push
+  enhancedocs push <project_id>
   enhancedocs -v`);
   process.exit(code);
 }
@@ -15,8 +15,8 @@ const ln = args.length;
 const [x, y] = args;
 const cmds = {
   build: () => buildDocs(x),
-  push: () => pushDocs(),
-  ['-v']: () => console.log(require(path.join(__dirname, '../package.json')).version),
+  push: () => pushDocs(x),
+  ['-v']: () => console.log(require(path.join(__dirname, './package.json')).version),
 };
 try {
   cmds[cmd] ? cmds[cmd]() : help(0);
