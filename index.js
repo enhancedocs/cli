@@ -43,9 +43,13 @@ const pushDocs = (projectId) => new Promise((resolve, reject) => {
   if (!projectId) {
     return reject(new Error("Required Project Id; enhancedocs push <project_id>"));
   }
+  const apiKey = process.env.ENHANCEDOCS_API_KEY;
+  if (!apiKey) {
+    return reject(new Error("Required ENHANCEDOCS_API_KEY"));
+  }
   const enhanceAPIOptions = {
     headers: {
-      authorization: "Bearer " + process.env.ENHANCEDOCS_API_KEY
+      authorization: "Bearer " + apiKey
     }
   }
   const req = http.get(enhancedocsBaseAPIUrl + `/integrations/signed-url?projectId=${projectId}`, enhanceAPIOptions, (res) => {
