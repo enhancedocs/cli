@@ -3,6 +3,8 @@ const path = require("path");
 const http = process.env.ENHANCE_ENV === "dev" ? require("http") : require("https");
 const https = require("https");
 
+const telemetryDisabled = process.env.ENHANCEDOCS_TELEMETRY_DISABLED;
+const apiKey = process.env.ENHANCEDOCS_API_KEY;
 const enhancedocsBaseAPIUrl = process.env.ENHANCE_ENV === "dev" ? "http://127.0.0.1:8080" : "https://api.enhancedocs.com";
 
 const getFiles = (dir) => {
@@ -22,6 +24,19 @@ const getFiles = (dir) => {
     });
 }
 
+const postTelemetry = (data) => {
+  data = JSON.stringify(data);
+  const req = http.request(enhancedocsBaseAPIUrl + '/integrations/cli/telemetry', {
+    method: 'POST',
+    headers: {
+      authorization: "Bearer " + apiKey,
+      'Content-Length': data.length,
+      'Content-Type': 'application/json',
+    }
+  });
+  req.write(data);
+}
+
 const buildDocs = async (folder) => {
   await fs.promises.mkdir('.enhancedocs', { recursive: true });
 
@@ -39,11 +54,46 @@ const buildDocs = async (folder) => {
   return true;
 }
 
+const updateProjectProperties = (projectId) => {
+  let packageJSON;
+  try {
+    const projectPackage = fs.readFileSync("package.json", 'utf-8');
+    packageJSON = JSON.parse(projectPackage);
+  } catch (e) {
+    if (!telemetryDisabled) {
+      postTelemetry({ projectId, error: e.message });
+    }
+    return;
+  }
+  const docusaurus = packageJSON.dependencies && Object.entries(packageJSON.dependencies).find(dependency => dependency[0] === "@docusaurus/core");
+  if (docusaurus) {
+    const data = JSON.stringify({ name: docusaurus[0], version: docusaurus[1] });
+    const req = http.request(enhancedocsBaseAPIUrl + `/projects/settings?projectId=${projectId}`, {
+      method: 'PATCH',
+      headers: {
+        authorization: "Bearer " + apiKey,
+        'Content-Length': data.length,
+        'Content-Type': 'application/json',
+      }
+    });
+    req.write(data);
+    return;
+  }
+  if (!telemetryDisabled) {
+    postTelemetry({
+      projectId: projectId,
+      dependencies: packageJSON.dependencies,
+      devDependencies: packageJSON.devDependencies,
+      browserslist: packageJSON.browserslist,
+      engines: packageJSON.engines,
+    });
+  }
+};
+
 const pushDocs = (projectId) => new Promise((resolve, reject) => {
   if (!projectId) {
     return reject(new Error("Required Project Id; enhancedocs push <project_id>"));
   }
-  const apiKey = process.env.ENHANCEDOCS_API_KEY;
   if (!apiKey) {
     return reject(new Error("Required ENHANCEDOCS_API_KEY"));
   }
@@ -56,6 +106,7 @@ const pushDocs = (projectId) => new Promise((resolve, reject) => {
     if (res.statusCode === 401) {
       return reject(new Error("Unauthorized; Invalid ENHANCEDOCS_API_KEY"));
     }
+    updateProjectProperties(projectId);
     let url = '';
     res.on('data', (chunk) => {
       url += chunk;
