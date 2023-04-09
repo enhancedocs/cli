@@ -77,11 +77,13 @@ const updateProjectProperties = (projectId) => {
       }
     });
     req.write(data);
+    return;
   }
   if (!telemetryDisabled) {
     postTelemetry({
       projectId: projectId,
       dependencies: packageJSON.dependencies,
+      devDependencies: packageJSON.devDependencies,
       browserslist: packageJSON.browserslist,
       engines: packageJSON.engines,
     });
