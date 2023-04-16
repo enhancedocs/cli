@@ -18,9 +18,9 @@ const version = () => console.log(require(path.join(__dirname, './package.json')
 
 const [, , cmd, ...args] = process.argv;
 const ln = args.length;
-const [x, y, z] = args;
+const [x, ...y] = args;
 const cmds = {
-  build: () => buildDocs(x),
+  build: () => buildDocs(args),
   push: () => pushDocs(x),
   ['-v']: () => version(),
   ['--version']: () => version(),

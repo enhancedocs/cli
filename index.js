@@ -37,11 +37,16 @@ const postTelemetry = (data) => {
   req.write(data);
 }
 
-const buildDocs = async (folder) => {
+const buildDocs = async (folders) => {
   await fs.promises.mkdir('.enhancedocs', { recursive: true });
 
   const outputFilePath = path.join('.enhancedocs', 'output.jsonp');
-  const files = await getFiles(folder);
+  const filesPromises = folders.map(async folder => {
+    return await getFiles(folder);
+  });
+
+  const filesArrays = await Promise.all(filesPromises);
+  const files = filesArrays.flat();
 
   const outputData = await Promise.all(files.map(async file => {
     const content = await fs.promises.readFile(file, 'utf-8');
