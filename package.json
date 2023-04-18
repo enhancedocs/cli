@@ -1,11 +1,11 @@
 {
   "name": "enhancedocs",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "main": "index.js",
   "bin": "./bin.js",
   "repository": {
     "type": "git",
-    "url": "git@github.com:enhancedocs/enhancedocs.git"
+    "url": "git@github.com:enhancedocs/cli.git"
   },
   "license": "Apache-2.0",
   "author": "Alvaro Molina <alw3ys@gmail.com>"
