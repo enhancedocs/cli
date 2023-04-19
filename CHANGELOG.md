@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.6] - 2023-04-19
+
+### Added
+- Add support to pass custom server URL
+
+### Changed
+- Now `push` option does not require projectId
+- Handle `https` and `http` from `baseURL`
+- Other internal logic not changelog relevant
+
+## [0.4.5] - 2023-04-17
+
+### Changed
+- Update repository name to `enhancedocs/cli`
+
 ## [0.4.4] - 2023-04-16
 
 ### Added
