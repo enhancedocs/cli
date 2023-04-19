@@ -1,11 +1,17 @@
 const fs = require("fs");
 const path = require("path");
-const http = process.env.ENHANCE_ENV === "dev" ? require("http") : require("https");
-const https = require("https");
 
+const managedAPIBaseURL = "https://api.enhancedocs.com";
+const apiBaseURL = process.env.API_BASE_URL ? process.env.API_BASE_URL : managedAPIBaseURL;
+const http = apiBaseURL.startsWith("https") ? require("https") : require("http");
 const telemetryDisabled = process.env.ENHANCEDOCS_TELEMETRY_DISABLED;
 const apiKey = process.env.ENHANCEDOCS_API_KEY;
-const enhancedocsBaseAPIUrl = process.env.ENHANCE_ENV === "dev" ? "http://127.0.0.1:8080" : "https://api.enhancedocs.com";
+
+const enhanceAPIOptions = {
+  headers: {
+    authorization: "Bearer " + apiKey
+  }
+}
 
 const getFiles = (dir) => {
   return fs.promises.readdir(dir, { withFileTypes: true }).then(entries => {
@@ -26,7 +32,7 @@ const getFiles = (dir) => {
 
 const postTelemetry = (data) => {
   data = JSON.stringify(data);
-  const req = http.request(enhancedocsBaseAPIUrl + '/integrations/cli/telemetry', {
+  const req = http.request(apiBaseURL + '/integrations/cli/telemetry', {
     method: 'POST',
     headers: {
       authorization: "Bearer " + apiKey,
@@ -73,7 +79,7 @@ const updateProjectProperties = (projectId) => {
   const docusaurus = packageJSON.dependencies && Object.entries(packageJSON.dependencies).find(dependency => dependency[0] === "@docusaurus/core");
   if (docusaurus) {
     const data = JSON.stringify({ name: docusaurus[0], version: docusaurus[1] });
-    const req = http.request(enhancedocsBaseAPIUrl + `/projects/settings?projectId=${projectId}`, {
+    const req = http.request(apiBaseURL + `/projects/settings?projectId=${projectId}`, {
       method: 'PATCH',
       headers: {
         authorization: "Bearer " + apiKey,
@@ -96,41 +102,27 @@ const updateProjectProperties = (projectId) => {
 };
 
 const pushDocs = (projectId) => new Promise((resolve, reject) => {
-  if (!projectId) {
-    return reject(new Error("Required Project Id; enhancedocs push <project_id>"));
-  }
   if (!apiKey) {
     return reject(new Error("Required ENHANCEDOCS_API_KEY"));
   }
-  const enhanceAPIOptions = {
-    headers: {
-      authorization: "Bearer " + apiKey
-    }
-  }
-  const req = http.get(enhancedocsBaseAPIUrl + `/integrations/signed-url?projectId=${projectId}`, enhanceAPIOptions, (res) => {
-    if (res.statusCode === 401) {
-      return reject(new Error("Unauthorized; Invalid ENHANCEDOCS_API_KEY"));
-    }
+  const readStream = fs.createReadStream(".enhancedocs/output.jsonp");
+  let url = apiBaseURL + `/ingest`;
+  if (projectId) {
+    url = `${url}?projectId=${projectId}`
     updateProjectProperties(projectId);
-    let url = '';
-    res.on('data', (chunk) => {
-      url += chunk;
-    });
-    res.on('end', () => {
-      const readStream = fs.createReadStream(".enhancedocs/output.jsonp");
-      const req = https.request(url, { method: 'PUT' });
-      readStream.on('data', function(chunk) {
-        req.write(chunk);
-      });
-      readStream.on('end',() => {
-        req.end();
-        resolve();
-      });
-      req.on('error', (err) => reject(err));
-      readStream.on('error', (err) => reject(err));
-    });
-  })
+  }
+  const req = http.request(url, { ...enhanceAPIOptions, method: 'PUT' });
+  readStream.on('data', function(chunk) {
+    console.log(`🗂   Uploading ${chunk.length} of ${readStream.bytesRead} bytes...`);
+    req.write(chunk);
+  });
+  readStream.on('end',() => {
+    req.end();
+    resolve();
+    console.log('✨  Ingestion finished');
+  });
   req.on('error', (err) => reject(err));
+  readStream.on('error', (err) => reject(err));
 });
 
 module.exports = {
