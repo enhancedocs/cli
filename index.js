@@ -1,15 +1,15 @@
-const fs = require("fs");
-const path = require("path");
+const fs = require('fs');
+const path = require('path');
 
-const managedAPIBaseURL = "https://api.enhancedocs.com";
+const managedAPIBaseURL = 'https://api.enhancedocs.com';
 const apiBaseURL = process.env.API_BASE_URL ? process.env.API_BASE_URL : managedAPIBaseURL;
-const http = apiBaseURL.startsWith("https") ? require("https") : require("http");
+const http = apiBaseURL.startsWith('https') ? require('https') : require('http');
 const telemetryDisabled = process.env.ENHANCEDOCS_TELEMETRY_DISABLED;
 const apiKey = process.env.ENHANCEDOCS_API_KEY;
 
 const enhanceAPIOptions = {
   headers: {
-    authorization: "Bearer " + apiKey
+    authorization: 'Bearer ' + apiKey
   }
 }
 
@@ -68,7 +68,7 @@ const buildDocs = async (folders) => {
 const updateProjectProperties = (projectId) => {
   let packageJSON;
   try {
-    const projectPackage = fs.readFileSync("package.json", 'utf-8');
+    const projectPackage = fs.readFileSync('package.json', 'utf-8');
     packageJSON = JSON.parse(projectPackage);
   } catch (e) {
     if (!telemetryDisabled) {
@@ -76,7 +76,7 @@ const updateProjectProperties = (projectId) => {
     }
     return;
   }
-  const docusaurus = packageJSON.dependencies && Object.entries(packageJSON.dependencies).find(dependency => dependency[0] === "@docusaurus/core");
+  const docusaurus = packageJSON.dependencies && Object.entries(packageJSON.dependencies).find(dependency => dependency[0] === '@docusaurus/core');
   if (docusaurus) {
     const data = JSON.stringify({ name: docusaurus[0], version: docusaurus[1] });
     const req = http.request(apiBaseURL + `/projects/settings?projectId=${projectId}`, {
@@ -103,9 +103,9 @@ const updateProjectProperties = (projectId) => {
 
 const pushDocs = (projectId) => new Promise((resolve, reject) => {
   if (!apiKey) {
-    return reject(new Error("Required ENHANCEDOCS_API_KEY"));
+    return reject(new Error('Required ENHANCEDOCS_API_KEY'));
   }
-  const readStream = fs.createReadStream(".enhancedocs/output.jsonp");
+  const readStream = fs.createReadStream('.enhancedocs/output.jsonp');
   let url = apiBaseURL + `/ingest`;
   if (projectId) {
     url = `${url}?projectId=${projectId}`

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-const path = require("path");
-const { buildDocs, pushDocs, test } = require("./");
+const path = require('path');
+const { buildDocs, pushDocs } = require('./');
 
 const help = (code) => {
   console.log(`Usage: enhancedocs [options] [arguments]
