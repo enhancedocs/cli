@@ -125,7 +125,44 @@ const pushDocs = (projectId) => new Promise((resolve, reject) => {
   readStream.on('error', (err) => reject(err));
 });
 
+const askDocs = (args) => new Promise((resolve, reject) => {
+  let projectId;
+  const projectArgIndex = args.indexOf("--project");
+  const projectIdIndex = projectArgIndex + 1;
+  if (projectArgIndex !== -1) {
+    if (args.length -1 < projectIdIndex) {
+      return reject(new Error('Provide a projectId. --project [projectId] [question]'));
+    }
+    projectId = args[projectArgIndex + 1];
+  }
+  let question = args.join(" ");
+  if (!apiKey) {
+    return reject(new Error('Required ENHANCEDOCS_API_KEY'));
+  }
+  let url = apiBaseURL + `/ask?question=${question}`;
+  if (projectId) {
+    question = args.slice(projectIdIndex + 1).join(" ");
+    url = `${url}&projectId=${question}`
+  }
+  if (!question) {
+    return reject(new Error('Provide a question'));
+  }
+  const req = http.get(url, { ...enhanceAPIOptions, method: 'GET' }, (res) => {
+    let result = '';
+    res.on('data', (chunk) => {
+      result += chunk;
+    });
+    res.on('end', () => {
+      resolve();
+      console.log(result);
+    });
+    res.on("error", (err) => reject(err));
+  });
+  req.on('error', (err) => reject(err));
+});
+
 module.exports = {
   buildDocs: buildDocs,
   pushDocs: pushDocs,
+  askDocs: askDocs,
 };
