@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 const path = require('path');
-const { buildDocs, pushDocs } = require('./');
+const { buildDocs, pushDocs, askDocs } = require('./');
 
 const help = (code) => {
   console.log(`Usage: enhancedocs [options] [arguments]
@@ -9,6 +9,7 @@ Options:
 
   build [...contentPath]      Bundle ingest content into one file
   push [projectId(optional)]  Push bundled content file to EnhanceDocs API
+  ask [question]              Query EnhanceDocs Server /ask endpoint
   -v, --version               Print EnhanceDocs CLI version
   -h, --help                  Print EnhanceDocs command line options (currently set)`);
   process.exit(code);
@@ -22,6 +23,7 @@ const [x, ...y] = args;
 const cmds = {
   build: () => buildDocs(args),
   push: () => pushDocs(x),
+  ask: () => askDocs(args),
   ['-v']: () => version(),
   ['--version']: () => version(),
   ['-h']: () => help(0),
