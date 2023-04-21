@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { getFiles } = require("./utils");
 
 const managedAPIBaseURL = 'https://api.enhancedocs.com';
 const apiBaseURL = process.env.API_BASE_URL ? process.env.API_BASE_URL : managedAPIBaseURL;
@@ -11,23 +12,6 @@ const enhanceAPIOptions = {
   headers: {
     authorization: 'Bearer ' + apiKey
   }
-}
-
-const getFiles = (dir) => {
-  return fs.promises.readdir(dir, { withFileTypes: true }).then(entries => {
-      const filesPromises = entries.map(entry => {
-        const entryPath = path.join(dir, entry.name);
-        if (entry.isFile()) {
-          return Promise.resolve([entryPath]);
-        } else {
-          return getFiles(entryPath);
-        }
-      });
-      return Promise.all(filesPromises);
-    })
-    .then(filesArrays => {
-      return filesArrays.flat();
-    });
 }
 
 const postTelemetry = (data) => {
