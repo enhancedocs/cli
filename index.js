@@ -8,18 +8,15 @@ const http = apiBaseURL.startsWith('https') ? require('https') : require('http')
 const telemetryDisabled = process.env.ENHANCEDOCS_TELEMETRY_DISABLED;
 const apiKey = process.env.ENHANCEDOCS_API_KEY;
 
-const enhanceAPIOptions = {
-  headers: {
-    authorization: 'Bearer ' + apiKey
-  }
-}
+const enhanceAPIOptions = { headers: { } };
+if (apiKey) enhanceAPIOptions.headers.authorization = 'Bearer ' + apiKey
 
 const postTelemetry = (data) => {
   data = JSON.stringify(data);
   const req = http.request(apiBaseURL + '/integrations/cli/telemetry', {
     method: 'POST',
     headers: {
-      authorization: "Bearer " + apiKey,
+      ...enhanceAPIOptions.headers,
       'Content-Length': data.length,
       'Content-Type': 'application/json',
     }
@@ -66,7 +63,7 @@ const updateProjectProperties = (projectId) => {
     const req = http.request(apiBaseURL + `/projects/settings?projectId=${projectId}`, {
       method: 'PATCH',
       headers: {
-        authorization: "Bearer " + apiKey,
+        ...enhanceAPIOptions.headers,
         'Content-Length': data.length,
         'Content-Type': 'application/json',
       }
@@ -86,9 +83,6 @@ const updateProjectProperties = (projectId) => {
 };
 
 const pushDocs = (projectId) => new Promise((resolve, reject) => {
-  if (!apiKey) {
-    return reject(new Error('Required ENHANCEDOCS_API_KEY'));
-  }
   const readStream = fs.createReadStream('.enhancedocs/output.jsonp');
   let url = apiBaseURL + `/ingest`;
   if (projectId) {
@@ -120,13 +114,12 @@ const askDocs = (args) => new Promise((resolve, reject) => {
     projectId = args[projectArgIndex + 1];
   }
   let question = args.join(" ");
-  if (!apiKey) {
-    return reject(new Error('Required ENHANCEDOCS_API_KEY'));
-  }
-  let url = apiBaseURL + `/ask?question=${question}`;
+  let url;
   if (projectId) {
     question = args.slice(projectIdIndex + 1).join(" ");
-    url = `${url}&projectId=${question}`
+    url =  apiBaseURL + `/ask?question=${question}&projectId=${projectId}`
+  } else {
+    url = apiBaseURL + `/ask?question=${question}`;
   }
   if (!question) {
     return reject(new Error('Provide a question'));
