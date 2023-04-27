@@ -10,15 +10,14 @@ jobs:
     name: Publish
     runs-on: ubuntu-latest
     steps:
-      steps:
-        - name: Checkout Repository
-          uses: actions/checkout@v3
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
-        - name: Install EnhanceDocs CLI
-          uses: enhancedocs/setup-enhancedocs@6816584d37df3eb3daeaa41fa8866f640cb50686
-          with:
-            # More about EnhanceDocs Secret API Key: https://docs.enhancedocs.com/security/api-keys
-            api-key: ${{ secrets.ENHANCEDOCS_API_KEY }}
+      - name: Install EnhanceDocs CLI
+        uses: enhancedocs/setup-enhancedocs@6816584d37df3eb3daeaa41fa8866f640cb50686
+        with:
+          # More about EnhanceDocs Secret API Key: https://docs.enhancedocs.com/security/api-keys
+          api-key: ${{ secrets.ENHANCEDOCS_API_KEY }}
 
-        - name: Version
-          run: enhancedocs --version
+      - name: Version
+        run: enhancedocs --version
