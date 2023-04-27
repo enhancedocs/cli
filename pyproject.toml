@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "enhancedocs"
-version = "0.5.0a6"
+version = "0.5.0"
 description = "EnhanceDocs Command Line Interface (CLI)"
 authors = ["Alvaro Molina <alw3ys@gmail.com>"]
 license = "Apache-2.0"
