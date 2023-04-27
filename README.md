@@ -17,3 +17,9 @@ You can install and configure EnhanceDocs using this command:
 ```bash
 pip install -U enhancedocs
 ```
+
+## Running EnhanceDocs CLI on Github Actions
+
+Set up your GitHub Actions workflow with a specific version of EnhanceDocs CLI.
+
+https://github.com/marketplace/actions/setup-enhancedocs
