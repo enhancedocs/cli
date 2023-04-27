@@ -14,7 +14,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Install EnhanceDocs CLI
-        uses: enhancedocs/setup-enhancedocs@13cb1b22402996785da1eed9ab981227ae3c94e3
+        uses: enhancedocs/setup-enhancedocs@b278ff542335737822d6917fb38b3e2e049a56cd
         with:
           # More about EnhanceDocs Secret API Key: https://docs.enhancedocs.com/security/api-keys
           api-key: ${{ secrets.ENHANCEDOCS_API_KEY }}
