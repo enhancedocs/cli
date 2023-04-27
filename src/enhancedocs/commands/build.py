@@ -2,7 +2,7 @@ import os
 import click
 import json
 
-from enhancedocs.utils import get_files
+from ..utils import get_files
 
 
 @click.command()

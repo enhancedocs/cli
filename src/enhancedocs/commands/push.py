@@ -3,7 +3,7 @@ import os
 import click
 import requests
 
-from enhancedocs.config import file_path, api_base_url, headers
+from ..config import file_path, api_base_url, headers
 
 
 @click.command()

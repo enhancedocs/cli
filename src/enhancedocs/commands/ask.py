@@ -1,7 +1,7 @@
 import click
 import requests
 
-from enhancedocs.config import api_base_url, headers
+from ..config import api_base_url, headers
 
 
 @click.command()

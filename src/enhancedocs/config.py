@@ -1,7 +1,5 @@
 import os
 
-package_name = "enhancedocs"
-
 telemetry = os.environ.get("ENHANCEDOCS_TELEMETRY_DISABLED")
 file_path = ".enhancedocs/output.jsonp"
 api_base_url = os.environ.get("API_BASE_URL")
