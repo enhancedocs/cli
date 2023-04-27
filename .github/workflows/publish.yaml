@@ -5,7 +5,7 @@ on:
     paths-ignore:
     - .github/**
     branches:
-      - python
+      - main
 
 jobs:
   publish:
