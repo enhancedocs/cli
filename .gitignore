@@ -1,7 +1,3 @@
-.idea
-
+__pycache__
 .enhancedocs
-
-**/node_modules
-**/.DS_Store
-npm-debug.log*
+dist
