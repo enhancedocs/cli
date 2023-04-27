@@ -29,4 +29,4 @@ def build(paths):
                 if file_data is not None:
                     output_file.write(json.dumps(file_data) + '\n')
 
-    return True
+    click.echo("🔨 Build finished")

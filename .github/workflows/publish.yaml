@@ -5,7 +5,7 @@ on:
     paths-ignore:
     - .github/**
     branches:
-      - python
+      - main
 
 jobs:
   publish:
@@ -29,5 +29,5 @@ jobs:
       - name: 📦 Build
         run: poetry build
 
-      - name: 🎉 Build
+      - name: 🎉 Publish
         run: poetry publish
