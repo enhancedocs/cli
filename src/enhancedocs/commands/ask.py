@@ -9,6 +9,7 @@ from ..config import api_base_url, headers
 @click.argument('question', nargs=-1, type=click.STRING)
 def ask(project, question):
     """Ask a question to your documentation"""
+
     if not question:
         raise click.UsageError('Provide a question')
     question = " ".join(question)

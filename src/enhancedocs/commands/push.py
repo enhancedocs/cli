@@ -31,7 +31,7 @@ def push(project, project_id):
                                     stream=True
                                     )
             response.raise_for_status()
-            click.echo(f"✨ Ingestion finished in {response.elapsed.total_seconds()}s")
+            click.echo(f"✨ Ingestion finished in {response.elapsed.total_seconds():.4f}s")
     except requests.exceptions.RequestException as err:
         raise click.ClickException(str(err))
 
