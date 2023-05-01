@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "enhancedocs"
-version = "0.5.3"
+version = "0.5.4"
 description = "EnhanceDocs Command Line Interface (CLI)"
 authors = ["Alvaro Molina <alw3ys@gmail.com>"]
 license = "Apache-2.0"
@@ -20,3 +20,4 @@ pathspec = "^0.11.1"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+    
