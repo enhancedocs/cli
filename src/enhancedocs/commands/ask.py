@@ -11,6 +11,8 @@ from ..config import api_base_url, headers
 @click.argument('question', nargs=-1, type=click.STRING)
 def ask(project, chat, stream, question):
     """Ask a question to your documentation"""
+    if chat and not stream:
+        raise click.UsageError("--chat option can only be used with --stream")
     history = []
     if not question:
         if chat:
@@ -26,22 +28,27 @@ def ask(project, chat, stream, question):
     if project:
         params['projectId'] = project
 
-    def ask_request_history(body):
+    def ask_request_history(question):
         try:
+            body = {"question": question, "history": history}
             response = requests.post(
                 url,
                 params=params,
+                headers=headers,
                 json=body,
                 stream=stream
             )
             response.raise_for_status()
+            content = ""
             for chunk in response.iter_content(chunk_size=None):
-                click.echo(chunk.decode('utf-8'), nl=False)
+                text = chunk.decode('utf-8')
+                content += text
+                click.echo(text, nl=False)
             if chat:
-                history.append(f"AI: {response.text}")
-                question = click.prompt("Question", type=str)
+                history.append(f"AI: {content}")
+                question = click.prompt("\nQuestion", type=str)
                 history.append(f"Human: {question}")
-                ask_request_history({"question": question, "history": history})
+                ask_request_history(question)
             else:
                 click.echo("")
         except requests.exceptions.RequestException as err:
@@ -51,13 +58,16 @@ def ask(project, chat, stream, question):
         response = requests.get(url, params=params, headers=headers, stream=stream)
         response.raise_for_status()
         if stream:
+            content = ""
             for chunk in response.iter_content(chunk_size=None):
-                click.echo(chunk.decode('utf-8'), nl=False)
+                text = chunk.decode('utf-8')
+                content += text
+                click.echo(text, nl=False)
             if chat:
-                history.append(f"AI: {response.text}")
-                question = click.prompt("Question", type=str)
+                history.append(f"AI: {content}")
+                question = click.prompt("\nQuestion", type=str)
                 history.append(f"Human: {question}")
-                ask_request_history({"question": question, "history": history})
+                ask_request_history(question)
             else:
                 click.echo("")
         else:
