@@ -1,4 +1,6 @@
 import os
+import click
+from .config import ENVIRONMENT_VARIABLES_HELP
 from pathspec import PathSpec
 from pathspec.patterns import GitWildMatchPattern
 
@@ -31,3 +33,9 @@ def get_files(dir_path, ignore_spec):
         elif entry.is_dir():
             files_list.extend(get_files(entry_path, ignore_spec))
     return files_list
+
+
+class CustomHelpGroup(click.Group):
+    def get_help(self, ctx):
+        default_help = super().get_help(ctx)
+        return f"{default_help}\n{ENVIRONMENT_VARIABLES_HELP}"
