@@ -1,15 +1,10 @@
 import click
 
-from .config import ENVIRONMENT_VARIABLES_HELP
+from .utils import CustomHelpGroup
 from .commands.ask import ask
 from .commands.build import build
+from .commands.alpha import alpha
 from .commands.push import push
-
-
-class CustomHelpGroup(click.Group):
-    def get_help(self, ctx):
-        default_help = super().get_help(ctx)
-        return f"{default_help}\n{ENVIRONMENT_VARIABLES_HELP}"
 
 
 @click.group(cls=CustomHelpGroup)
@@ -21,6 +16,7 @@ def cli():
 
 cli.add_command(ask)
 cli.add_command(build)
+cli.add_command(alpha)
 cli.add_command(push)
 
 
