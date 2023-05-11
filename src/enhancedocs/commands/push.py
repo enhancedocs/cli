@@ -21,7 +21,6 @@ def push(project, project_id):
     if project is not None:
         params['projectId'] = project
         update_project_properties(params)
-
     try:
         with open(file_path, 'rb') as file:
             response = requests.put(f'{api_base_url}/ingest',
@@ -40,18 +39,16 @@ def update_project_properties(params):
     try:
         with open('package.json', 'r', encoding='utf-8') as f:
             package_json = json.load(f)
+            docusaurus = package_json.get('dependencies', {}).get('@docusaurus/core')
+
+            if docusaurus:
+                body = {'name': '@docusaurus/core', 'version': docusaurus}
+                requests.patch(
+                    f'{api_base_url}/projects/settings',
+                    json=body,
+                    params=params,
+                    headers=headers
+                )
     except Exception as e:
         if telemetry():
             capture_exception(e)
-        return
-
-    docusaurus = package_json.get('dependencies', {}).get('@docusaurus/core')
-
-    if docusaurus:
-        data = json.dumps({'name': '@docusaurus/core', 'version': docusaurus})
-        requests.patch(
-            f'{api_base_url}/projects/settings',
-            json=data,
-            params=params,
-            headers=headers
-        )
