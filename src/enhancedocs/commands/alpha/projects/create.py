@@ -41,4 +41,4 @@ def create(name, source, url):
             response.raise_for_status()
         except requests.exceptions.RequestException as err:
             raise click.ClickException(str(err))
-        click.echo(f'Project {name} has been sucesfully created')
+        click.echo(f'Project {name} has been successfully created')
